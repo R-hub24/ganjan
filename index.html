@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام تسجيل مركز ١ السليمانية - قسم الشباب</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <title>سیستەمی تۆمارکردنی مەڵبەندی ١ی سلێمانی - بەشی گەنجان</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -22,7 +22,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Cairo', sans-serif;
+            font-family: 'Noto Kufi Arabic', sans-serif;
         }
 
         body {
@@ -204,96 +204,96 @@
 
     <header>
         <div class="ey-logo">EY</div>
-        <h1>نظام تسجيل قسم الشباب في مركز ١ السليمانية</h1>
+        <h1>سیستەمی تۆمارکردنی بەشی گەنجانی مەڵبەندی ١ی سلێمانی</h1>
         <div class="counter-badge">
             <i class="fa-solid fa-users"></i>
-            إجمالي الأعضاء المسجلين: <span id="totalCounter">٠</span>
+            کۆی گشتی ئەندامە تۆمارکراوەکان: <span id="totalCounter">٠</span>
         </div>
     </header>
 
     <div class="container">
         <div class="card">
             <div class="card-header">
-                <h2>استمارة العضوية</h2>
+                <h2>فۆرمی بوون بە ئەندام</h2>
             </div>
             <div class="card-body">
                 <form id="regForm" onsubmit="submitData(event)">
                     
                     <div class="form-group">
-                        <label>الاسم الكامل (الثلاثي):</label>
-                        <input type="text" id="fullName" required placeholder="أدخل الاسم الثلاثي" oninput="validateArabic(this)">
+                        <label>ناوی تەواو (سیانی):</label>
+                        <input type="text" id="fullName" required placeholder="ناوی سیانی بنووسە" oninput="validateKurdish(this)">
                     </div>
 
                     <div class="form-group">
-                        <label>رقم الهاتف:</label>
+                        <label>ژمارەی مۆبایل:</label>
                         <input type="tel" id="phone" required placeholder="0750XXXXXXX" oninput="validateEnglishNumbers(this)">
                     </div>
 
                     <div class="form-group">
-                        <label>المدينة:</label>
+                        <label>شار:</label>
                         <select id="city" required>
-                            <option value="">اختر المدينة</option>
-                            <option value="السليمانية">السليمانية</option>
-                            <option value="جمجمال">جمجمال</option>
-                            <option value="دربنديخان">دربنديخان</option>
-                            <option value="كلار">كلار</option>
-                            <option value="رانية">رانية</option>
-                            <option value="قلادزة">قلادزة</option>
-                            <option value="شارەزور">شارەزور</option>
+                            <option value="">شار هەڵبژێرە</option>
+                            <option value="سلێمانی">سلێمانی</option>
+                            <option value="چەمچەماڵ">چەمچەماڵ</option>
+                            <option value="دەربەندیخان">دەربەندیخان</option>
+                            <option value="کەلار">کەلار</option>
+                            <option value="ڕانیە">ڕانیە</option>
+                            <option value="قەڵادزێ">قەڵادزێ</option>
+                            <option value="شارەزوور">شارەزوور</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label>اسم اللجنة:</label>
-                        <input type="text" id="committee" required placeholder="أدخل اسم اللجنة" oninput="validateArabic(this)">
+                        <label>ناوی کۆمیتە:</label>
+                        <input type="text" id="committee" required placeholder="ناوی کۆمیتە بنووسە" oninput="validateKurdish(this)">
                     </div>
 
                     <div class="form-group">
-                        <label>رقم بطاقة الناخب:</label>
-                        <input type="text" id="voterCard" required placeholder="رقم بطاقة الناخب" oninput="validateEnglishNumbers(this)">
+                        <label>ژمارەی کارتی دەنگدان:</label>
+                        <input type="text" id="voterCard" required placeholder="ژمارەی کارتی دەنگدان" oninput="validateEnglishNumbers(this)">
                     </div>
 
                     <div class="form-group">
-                        <label>مركز الانتخاب:</label>
-                        <input type="text" id="voterStation" required placeholder="اسم مركز الانتخاب" oninput="validateArabic(this)">
+                        <label>بنکەی دەنگدان:</label>
+                        <input type="text" id="voterStation" required placeholder="ناوی بنکەی دەنگدان" oninput="validateKurdish(this)">
                     </div>
 
                     <div class="form-group">
-                        <label>نوع العضوية:</label>
+                        <label>جۆری ئەندامێتی:</label>
                         <select id="membershipType" onchange="checkMembershipType()" required>
-                            <option value="عضو">عضو</option>
-                            <option value="عضو نشط">عضو نشط</option>
-                            <option value="عضو داعم">عضو داعم</option>
-                            <option value="مسؤول الفريق">مسؤول الفريق</option>
+                            <option value="ئەندام">ئەندام</option>
+                            <option value="ئەندامی چالاک">ئەندامی چالاک</option>
+                            <option value="ئەندامی پشتیوانی">ئەندامی پشتیوانی</option>
+                            <option value="بەرپرسی تیم">بەرپرسی تیم</option>
                         </select>
                     </div>
 
                     <div id="teamMembersBox">
-                        <label style="color: var(--primary-green); margin-bottom: 10px; display: block; font-weight: 700;">أدخل الأسماء الكاملة لأعضاء فريقك العشرة:</label>
+                        <label style="color: var(--primary-green); margin-bottom: 10px; display: block; font-weight: 700;">ناوی تەواوی هەر ١٠ ئەندامی تیمەکەت بنووسە:</label>
                         <div id="tenInputsContainer"></div>
                     </div>
 
                     <div class="form-group">
-                        <label>صورة واجهة بطاقة الناخب:</label>
+                        <label>وێنەی پێشەوەی کارتی دەنگدان:</label>
                         <div class="file-box" onclick="document.getElementById('frontCard').click()">
                             <i class="fa-solid fa-id-card"></i>
-                            <p>تحميل واجهة البطاقة</p>
+                            <p>دابەزاندنی پێشەوەی کارت</p>
                             <input type="file" id="frontCard" accept="image/*" onchange="showFileName(this, 'frontName')">
                             <div id="frontName" class="file-name"></div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>صورة خلفية بطاقة الناخب:</label>
+                        <label>وێنەی پشتەوەی کارتی دەنگدان:</label>
                         <div class="file-box" onclick="document.getElementById('backCard').click()">
                             <i class="fa-solid fa-id-card"></i>
-                            <p>تحميل خلفية البطاقة</p>
+                            <p>دابەزاندنی پشتەوەی کارت</p>
                             <input type="file" id="backCard" accept="image/*" onchange="showFileName(this, 'backName')">
                             <div id="backName" class="file-name"></div>
                         </div>
                     </div>
 
-                    <button type="submit" class="submit-btn" id="submitBtn">إرسال البيانات</button>
+                    <button type="submit" class="submit-btn" id="submitBtn">ناردنی زانیارییەکان</button>
                 </form>
             </div>
         </div>
@@ -308,11 +308,11 @@
         for (let i = 1; i <= 10; i++) {
             let div = document.createElement('div');
             div.className = 'team-input';
-            div.innerHTML = `<input type="text" class="team-member-input" placeholder="اسم العضو رقم ${i}" oninput="validateArabic(this)">`;
+            div.innerHTML = `<input type="text" class="team-member-input" placeholder="ناوی ئەندامی ژمارە ${i}" oninput="validateKurdish(this)">`;
             tenContainer.appendChild(div);
         }
 
-        function validateArabic(input) {
+        function validateKurdish(input) {
             input.value = input.value.replace(/[a-zA-Z]/g, '');
         }
 
@@ -325,7 +325,7 @@
             const box = document.getElementById('teamMembersBox');
             const teamInputs = document.querySelectorAll('.team-member-input');
 
-            if (type === 'مسؤول الفريق') {
+            if (type === 'بەرپرسی تیم') {
                 box.style.display = 'block';
                 teamInputs.forEach(input => input.setAttribute('required', 'true'));
             } else {
@@ -336,7 +336,7 @@
 
         function showFileName(input, displayId) {
             if (input.files && input.files[0]) {
-                document.getElementById(displayId).innerText = "ملف: " + input.files[0].name;
+                document.getElementById(displayId).innerText = "فایل: " + input.files[0].name;
             }
         }
 
@@ -354,7 +354,7 @@
             
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.innerText = "جاري الإرسال...";
+            submitBtn.innerText = "چاوەڕوان بە...";
 
             const frontFile = document.getElementById('frontCard').files[0];
             const backFile = document.getElementById('backCard').files[0];
@@ -374,14 +374,14 @@
                         backImage: backBase64 || ""
                     };
 
-                    if (formData.membershipType === 'مسؤول الفريق') {
+                    if (formData.membershipType === 'بەرپرسی تیم') {
                         const members = [];
                         document.querySelectorAll('.team-member-input').forEach((input, index) => {
-                            members.push(`عضو ${index+1}: ${input.value}`);
+                            members.push(`ئەندام ${index+1}: ${input.value}`);
                         });
                         formData.teamMembers = members.join(" - ");
                     } else {
-                        formData.teamMembers = "لا يوجد";
+                        formData.teamMembers = "نییە";
                     }
 
                     fetch(scriptURL, {
@@ -392,7 +392,7 @@
                     })
                     .then(() => {
                         fetchTotalCount();
-                        submitBtn.innerText = "مبروك، لقد أصبحت عضواً";
+                        submitBtn.innerText = "پیرۆزە بویت بە ئەندام";
                         
                         setTimeout(() => {
                             document.getElementById('regForm').reset();
@@ -400,14 +400,14 @@
                             document.getElementById('frontName').innerText = "";
                             document.getElementById('backName').innerText = "";
                             submitBtn.disabled = false;
-                            submitBtn.innerText = "إرسال البيانات";
+                            submitBtn.innerText = "ناردنی زانیارییەکان";
                         }, 2500);
                     })
                     .catch(error => {
                         console.error('Error!', error.message);
-                        alert("حدث خطأ أثناء إرسال البيانات.");
+                        alert("کێشەیەک ڕویدا لە ناردنی داتاکان.");
                         submitBtn.disabled = false;
-                        submitBtn.innerText = "إرسال البيانات";
+                        submitBtn.innerText = "ناردنی زانیارییەکان";
                     });
 
                 });
