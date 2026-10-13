@@ -130,6 +130,7 @@
 
         input[type="text"],
         input[type="tel"],
+        input[type="password"],
         select {
             width: 100%;
             padding: 11px 14px;
@@ -198,6 +199,25 @@
         .submit-btn:hover {
             background: var(--primary-green);
         }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            background: white;
+        }
+
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .data-table th {
+            background-color: var(--secondary-green);
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -212,6 +232,53 @@
     </header>
 
     <div class="container">
+
+        <!-- بەشی بەڕێوەبردن بە پاسۆرد -->
+        <div class="card">
+            <div class="card-header" style="background: var(--secondary-green);">
+                <h2>بەشی بەڕێوەبردن و بینینی داتاکانی پاشەکەوتکراو</h2>
+            </div>
+            <div class="card-body">
+                <div id="loginBox">
+                    <p style="margin-bottom: 10px; font-weight: 600; color: var(--primary-green);">بۆ بینینی ناوی تۆمارکراوەکان، پاسۆرد بنووسە:</p>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="password" id="adminPassword" placeholder="">
+                        <button type="button" class="submit-btn" style="margin-top:0; width: 150px;" onclick="checkAdminPassword()">چوونەژورەوە</button>
+                    </div>
+                </div>
+
+                <div id="adminContent" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h3 style="color: var(--primary-green);">لیستی تەواوی تۆمارکراوەکان:</h3>
+                        <button type="button" onclick="clearData()" style="background: #c62828; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">سڕینەوەی هەموو داتاکان</button>
+                    </div>
+                    <div style="overflow-x: auto; max-height: 400px;">
+                        <table class="data-table" id="recordsTable">
+                            <thead>
+                               <tr>
+                                   <th>کات</th>
+                                   <th>ناوی تەواو</th>
+                                   <th>مۆبایل</th>
+                                   <th>شار</th>
+                                   <th>کۆمیتە</th>
+                                   <th>ژ.کارتی دەنگدان</th>
+                                   <th>بنکە</th>
+                                   <th>جۆر</th>
+                                   <th>تیم</th>
+                                   <th>پێشەوەی کارت</th>
+                                   <th>پشتەوەی کارت</th>
+                               </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- داتاکان لێرە نیشان دەدرێن -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- فۆرمی تۆمارکردن -->
         <div class="card">
             <div class="card-header">
                 <h2>فۆرمی بوون بە ئەندام</h2>
@@ -234,6 +301,7 @@
                         <select id="city" required>
                             <option value="">شار هەڵبژێرە</option>
                             <option value="سلێمانی">سلێمانی</option>
+                            <option value="شارباژێر">شارباژێر</option>
                             <option value="چەمچەماڵ">چەمچەماڵ</option>
                             <option value="دەربەندیخان">دەربەندیخان</option>
                             <option value="کەلار">کەلار</option>
@@ -300,9 +368,12 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbx0IRAy8JaHF5c9K0B_BJQr2Bkn5G0aRFOxrZngfnwV4Zw_b1V8uSwj97qJcOs8PECRmw/exec';
+        const correctPassword = "123"; 
+        const STORAGE_KEY = "ey_members_data_v2";
 
-        fetchTotalCount();
+        document.addEventListener("DOMContentLoaded", () => {
+            updateCounter();
+        });
 
         const tenContainer = document.getElementById('tenInputsContainer');
         for (let i = 1; i <= 10; i++) {
@@ -340,19 +411,79 @@
             }
         }
 
-        function fetchTotalCount() {
-            fetch(scriptURL)
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('totalCounter').innerText = data.length;
-            })
-            .catch(err => console.error("Error fetching count:", err));
+        function getStoredData() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+
+        function updateCounter() {
+            const data = getStoredData();
+            document.getElementById('totalCounter').innerText = data.length;
+        }
+
+        function checkAdminPassword() {
+            const pass = document.getElementById('adminPassword').value;
+            if (pass === correctPassword) {
+                document.getElementById('loginBox').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+                loadTableData();
+            } else {
+                alert("پاسۆردەکە هەڵەیە!");
+            }
+        }
+
+        function loadTableData() {
+            const data = getStoredData();
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = "";
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding: 15px;">هیچ تۆمارێک نییە هێشتا.</td></tr>`;
+                return;
+            }
+
+            data.forEach((item) => {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.timestamp}</td>
+                    <td>${item.fullName}</td>
+                    <td>${item.phone}</td>
+                    <td>${item.city}</td>
+                    <td>${item.committee}</td>
+                    <td>${item.voterCard}</td>
+                    <td>${item.voterStation}</td>
+                    <td>${item.membershipType}</td>
+                    <td>${item.teamMembers}</td>
+                    <td>${item.frontImage ? `<a href="${item.frontImage}" target="_blank" style="color:var(--secondary-green); font-weight:bold;">بینینی وێنە</a>` : 'نییە'}</td>
+                    <td>${item.backImage ? `<a href="${item.backImage}" target="_blank" style="color:var(--secondary-green); font-weight:bold;">بینینی وێنە</a>` : 'نییە'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function clearData() {
+            if (confirm("دڵنیای لە سڕینەوەی هەموو داتاکان؟")) {
+                localStorage.removeItem(STORAGE_KEY);
+                updateCounter();
+                loadTableData();
+            }
         }
 
         function submitData(e) {
             e.preventDefault();
             
             const submitBtn = document.getElementById('submitBtn');
+            const inputName = document.getElementById('fullName').value.trim();
+            const inputPhone = document.getElementById('phone').value.trim();
+
+            const currentData = getStoredData();
+            const exists = currentData.some(item => item.fullName === inputName || item.phone === inputPhone);
+
+            if (exists) {
+                alert("ئاگاداری: ئەم ناوە یان ژمارە مۆبایلە پێشتر تۆمارکراوە و دووبارە ناتوانرێت تۆمار بکرێتەوە!");
+                return;
+            }
+
             submitBtn.disabled = true;
             submitBtn.innerText = "چاوەڕوان بە...";
 
@@ -362,53 +493,43 @@
             toBase64(frontFile, function(frontBase64) {
                 toBase64(backFile, function(backBase64) {
                     
-                    const formData = {
-                        fullName: document.getElementById('fullName').value,
-                        phone: document.getElementById('phone').value,
+                    let teamMembersStr = "نییە";
+                    if (document.getElementById('membershipType').value === 'بەرپرسی تیم') {
+                        const members = [];
+                        document.querySelectorAll('.team-member-input').forEach((input, index) => {
+                            members.push(`ئەندام ${index+1}: ${input.value}`);
+                        });
+                        teamMembersStr = members.join(" - ");
+                    }
+
+                    const newData = {
+                        timestamp: new Date().toLocaleString('ku-IQ'),
+                        fullName: inputName,
+                        phone: inputPhone,
                         city: document.getElementById('city').value,
                         committee: document.getElementById('committee').value,
                         voterCard: document.getElementById('voterCard').value,
                         voterStation: document.getElementById('voterStation').value,
                         membershipType: document.getElementById('membershipType').value,
+                        teamMembers: teamMembersStr,
                         frontImage: frontBase64 || "",
                         backImage: backBase64 || ""
                     };
 
-                    if (formData.membershipType === 'بەرپرسی تیم') {
-                        const members = [];
-                        document.querySelectorAll('.team-member-input').forEach((input, index) => {
-                            members.push(`ئەندام ${index+1}: ${input.value}`);
-                        });
-                        formData.teamMembers = members.join(" - ");
-                    } else {
-                        formData.teamMembers = "نییە";
-                    }
+                    currentData.push(newData);
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
 
-                    fetch(scriptURL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(formData)
-                    })
-                    .then(() => {
-                        fetchTotalCount();
-                        submitBtn.innerText = "پیرۆزە بویت بە ئەندام";
-                        
-                        setTimeout(() => {
-                            document.getElementById('regForm').reset();
-                            document.getElementById('teamMembersBox').style.display = 'none';
-                            document.getElementById('frontName').innerText = "";
-                            document.getElementById('backName').innerText = "";
-                            submitBtn.disabled = false;
-                            submitBtn.innerText = "ناردنی زانیارییەکان";
-                        }, 2500);
-                    })
-                    .catch(error => {
-                        console.error('Error!', error.message);
-                        alert("کێشەیەک ڕویدا لە ناردنی داتاکان.");
+                    updateCounter();
+                    submitBtn.innerText = "پیرۆزە بویت بە ئەندام";
+                    
+                    setTimeout(() => {
+                        document.getElementById('regForm').reset();
+                        document.getElementById('teamMembersBox').style.display = 'none';
+                        document.getElementById('frontName').innerText = "";
+                        document.getElementById('backName').innerText = "";
                         submitBtn.disabled = false;
                         submitBtn.innerText = "ناردنی زانیارییەکان";
-                    });
+                    }, 2500);
 
                 });
             });
