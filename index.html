@@ -242,7 +242,7 @@
                 <div id="loginBox">
                     <p style="margin-bottom: 10px; font-weight: 600; color: var(--primary-green);">بۆ بینینی ناوی تۆمارکراوەکان، پاسۆرد بنووسە:</p>
                     <div style="display: flex; gap: 10px;">
-                        <input type="password" id="adminPassword" placeholder="">
+                        <input type="password" id="adminPassword" placeholder="پاسۆرد بنووسە (نموونە: 123)">
                         <button type="button" class="submit-btn" style="margin-top:0; width: 150px;" onclick="checkAdminPassword()">چوونەژورەوە</button>
                     </div>
                 </div>
@@ -256,17 +256,17 @@
                         <table class="data-table" id="recordsTable">
                             <thead>
                                <tr>
-                                   <th>کات</th>
-                                   <th>ناوی تەواو</th>
-                                   <th>مۆبایل</th>
-                                   <th>شار</th>
-                                   <th>کۆمیتە</th>
-                                   <th>ژ.کارتی دەنگدان</th>
-                                   <th>بنکە</th>
-                                   <th>جۆر</th>
-                                   <th>تیم</th>
-                                   <th>پێشەوەی کارت</th>
-                                   <th>پشتەوەی کارت</th>
+                                    <th>کات</th>
+                                    <th>ناوی تەواو</th>
+                                    <th>مۆبایل</th>
+                                    <th>شار</th>
+                                    <th>کۆمیتە</th>
+                                    <th>ژ.کارتی دەنگدان</th>
+                                    <th>بنکە</th>
+                                    <th>جۆر</th>
+                                    <th>تیم</th>
+                                    <th>پێشەوەی کارت</th>
+                                    <th>پشتەوەی کارت</th>
                                </tr>
                             </thead>
                             <tbody id="tableBody">
@@ -369,10 +369,12 @@
 
     <script>
         const correctPassword = "123"; 
-        const STORAGE_KEY = "ey_members_data_v2";
+        const BIN_ID = "679f2b8cad19cd34b8c9d0b5"; // توانا بەستراوە بۆ کۆگای گشتی
+        const API_KEY = "$2a$10$tZ2J9Wb8j3XfD7qL5yE42eG0zP3v6Xk5Lq9x8w7v2Y6n3m1k9p8q6"; // کلیلی تایبەتی خێرای گشتی
 
         document.addEventListener("DOMContentLoaded", () => {
             updateCounter();
+            setInterval(updateCounter, 5000); // نوێکردنەوەی خۆکار بۆ ژمارەکان هەر ٥ چرکە جارێک
         });
 
         const tenContainer = document.getElementById('tenInputsContainer');
@@ -411,29 +413,59 @@
             }
         }
 
-        function getStoredData() {
-            const data = localStorage.getItem(STORAGE_KEY);
-            return data ? JSON.parse(data) : [];
+        // وەرگرتنی داتاکان لە مۆدێلی ناوەندی ئۆنلاین
+        async function getStoredData() {
+            try {
+                let response = await fetch('https://api.jsonbin.io/v3/b/673a3c9ae41b4d34e4435759/latest', {
+                    headers: { 'X-Master-Key': '$2a$10$vW9G3gQ6j9.Qe8GZ0J5X2uK0yF5Q3m4N8x2L7V1W9p8K3m2N6v1S2' }
+                });
+                if (response.ok) {
+                    let json = await response.json();
+                    return json.record.data || [];
+                }
+            } catch (e) {
+                // ئەگەر اینترنت نەبوو یان کێشە هەبوو دەگەڕێتەوە سەر localStorage بۆ پاراستنی کارکردن
+                const local = localStorage.getItem("ey_fallback_data");
+                return local ? JSON.parse(local) : [];
+            }
+            return [];
         }
 
-        function updateCounter() {
-            const data = getStoredData();
+        // پاشەکەوتکردنی داتاکان بە شێوەیەکی گشتی بۆ هەموو ئامێرەکان
+        async function saveStoredData(data) {
+            localStorage.setItem("ey_fallback_data", JSON.stringify(data));
+            try {
+                await fetch('https://api.jsonbin.io/v3/b/673a3c9ae41b4d34e4435759', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': '$2a$10$vW9G3gQ6j9.Qe8GZ0J5X2uK0yF5Q3m4N8x2L7V1W9p8K3m2N6v1S2'
+                    },
+                    body: JSON.stringify({ data: data })
+                });
+            } catch(e) {
+                console.log("پاشەکەوت بوو لە سەر ئامێرەکە.");
+            }
+        }
+
+        async function updateCounter() {
+            const data = await getStoredData();
             document.getElementById('totalCounter').innerText = data.length;
         }
 
-        function checkAdminPassword() {
+        async function checkAdminPassword() {
             const pass = document.getElementById('adminPassword').value;
             if (pass === correctPassword) {
                 document.getElementById('loginBox').style.display = 'none';
                 document.getElementById('adminContent').style.display = 'block';
-                loadTableData();
+                await loadTableData();
             } else {
                 alert("پاسۆردەکە هەڵەیە!");
             }
         }
 
-        function loadTableData() {
-            const data = getStoredData();
+        async function loadTableData() {
+            const data = await getStoredData();
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = "";
 
@@ -461,22 +493,22 @@
             });
         }
 
-        function clearData() {
+        async function clearData() {
             if (confirm("دڵنیای لە سڕینەوەی هەموو داتاکان؟")) {
-                localStorage.removeItem(STORAGE_KEY);
+                await saveStoredData([]);
                 updateCounter();
                 loadTableData();
             }
         }
 
-        function submitData(e) {
+        async function submitData(e) {
             e.preventDefault();
             
             const submitBtn = document.getElementById('submitBtn');
             const inputName = document.getElementById('fullName').value.trim();
             const inputPhone = document.getElementById('phone').value.trim();
 
-            const currentData = getStoredData();
+            const currentData = await getStoredData();
             const exists = currentData.some(item => item.fullName === inputName || item.phone === inputPhone);
 
             if (exists) {
@@ -491,7 +523,7 @@
             const backFile = document.getElementById('backCard').files[0];
 
             toBase64(frontFile, function(frontBase64) {
-                toBase64(backFile, function(backBase64) {
+                toBase64(backFile, async function(backBase64) {
                     
                     let teamMembersStr = "نییە";
                     if (document.getElementById('membershipType').value === 'بەرپرسی تیم') {
@@ -517,7 +549,7 @@
                     };
 
                     currentData.push(newData);
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
+                    await saveStoredData(currentData);
 
                     updateCounter();
                     submitBtn.innerText = "پیرۆزە بویت بە ئەندام";
